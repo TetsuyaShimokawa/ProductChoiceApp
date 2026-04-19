@@ -10,11 +10,15 @@ const ATTR_FORMAT = {
   ExpectedReturn_Percent: (v) => `期待収益率: ${v} %`,
 };
 
-export default function OptionButton({ choice, onClick }) {
+export default function OptionButton({ choice, onClick, disabled }) {
   const attrEntries = Object.entries(choice.attributes);
 
   return (
-    <button onClick={() => onClick(choice)} style={styles.button}>
+    <button
+      onClick={() => !disabled && onClick(choice)}
+      disabled={disabled}
+      style={{ ...styles.button, ...(disabled ? styles.buttonDisabled : {}) }}
+    >
       <span style={styles.name}>{choice.name}</span>
       {attrEntries.map(([key, val]) => (
         <span key={key} style={styles.attr}>
@@ -26,6 +30,11 @@ export default function OptionButton({ choice, onClick }) {
 }
 
 const styles = {
+  buttonDisabled: {
+    opacity: 0.5,
+    cursor: "not-allowed",
+    pointerEvents: "none",
+  },
   button: {
     display: "flex",
     flexDirection: "column",

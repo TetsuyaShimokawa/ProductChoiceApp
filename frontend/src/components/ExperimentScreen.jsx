@@ -15,22 +15,28 @@ export default function ExperimentScreen({ studentId, products, onFinish }) {
   const [order, setOrder] = useState([]);
   const [trialIndex, setTrialIndex] = useState(0);
   const [shuffledChoices, setShuffledChoices] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { start, stop } = useTimer();
 
   useEffect(() => {
     const shuffled = shuffle(products);
     setOrder(shuffled);
+    setTrialIndex(0);
+    setIsSubmitting(false);
   }, [products]);
 
   useEffect(() => {
     if (order.length === 0) return;
     const product = order[trialIndex];
     setShuffledChoices(shuffle(product.choices));
+    setIsSubmitting(false);
     start();
   }, [order, trialIndex, start]);
 
   const handleSelect = useCallback(
     async (choice) => {
+      if (isSubmitting) return;
+      setIsSubmitting(true);
       const reactionTime = stop();
       const product = order[trialIndex];
       await onFinish({
@@ -45,7 +51,7 @@ export default function ExperimentScreen({ studentId, products, onFinish }) {
         setTrialIndex((i) => i + 1);
       }
     },
-    [order, trialIndex, studentId, stop, onFinish]
+    [order, trialIndex, studentId, stop, onFinish, isSubmitting]
   );
 
   if (order.length === 0) return null;
@@ -70,7 +76,7 @@ export default function ExperimentScreen({ studentId, products, onFinish }) {
         }}
       >
         {shuffledChoices.map((choice) => (
-          <OptionButton key={choice.id} choice={choice} onClick={handleSelect} />
+          <OptionButton key={choice.id} choice={choice} onClick={handleSelect} disabled={isSubmitting} />
         ))}
       </div>
     </div>

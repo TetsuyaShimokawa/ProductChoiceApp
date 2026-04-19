@@ -11,6 +11,7 @@ export default function App() {
   const [studentId, setStudentId] = useState("");
   const [products, setProducts] = useState([]);
   const [completedTrials, setCompletedTrials] = useState(0);
+  const [sessionKey, setSessionKey] = useState(0);
 
   useEffect(() => {
     fetchProducts().then(setProducts).catch(console.error);
@@ -19,6 +20,7 @@ export default function App() {
   function handleStart(id) {
     setStudentId(id);
     setCompletedTrials(0);
+    setSessionKey((k) => k + 1);
     setScreen(SCREENS.EXPERIMENT);
   }
 
@@ -40,7 +42,7 @@ export default function App() {
       {screen === SCREENS.SETUP && <SetupScreen onStart={handleStart} />}
       {screen === SCREENS.EXPERIMENT && products.length > 0 && (
         <ExperimentScreen
-          key={studentId}
+          key={sessionKey}
           studentId={studentId}
           products={products}
           onFinish={handleTrialFinish}

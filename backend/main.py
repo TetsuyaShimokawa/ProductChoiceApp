@@ -42,8 +42,14 @@ async def post_result(body: ResultIn):
         **body.model_dump(),
         timestamp=datetime.now(timezone.utc).isoformat(),
     )
-    _results.append(record.model_dump())
-    await save_to_sheets(record.model_dump())
+    record_dict = record.model_dump()
+    for i, r in enumerate(_results):
+        if r["student_id"] == body.student_id and r["trial"] == body.trial:
+            _results[i] = record_dict
+            await save_to_sheets(record_dict)
+            return {"status": "updated"}
+    _results.append(record_dict)
+    await save_to_sheets(record_dict)
     return {"status": "saved"}
 
 
