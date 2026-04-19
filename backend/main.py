@@ -13,7 +13,11 @@ from services.sheets import save_to_sheets
 
 app = FastAPI(title="ProductChoiceApp API")
 
-_default_origins = "http://localhost:5173,http://127.0.0.1:5173"
+_default_origins = (
+    "http://localhost:5173,"
+    "http://127.0.0.1:5173,"
+    "https://product-choice-frontend.onrender.com"
+)
 _origins = os.getenv("CORS_ORIGINS", _default_origins).split(",")
 
 app.add_middleware(
